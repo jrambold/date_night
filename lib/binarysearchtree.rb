@@ -4,9 +4,11 @@ class BinarySearchTree
 
   def initialize
     @root_node = nil
+    @total_nodes = 0
   end
 
   def insert(score, movie)
+    @total_nodes += 1
     if !@root_node
       @root_node = Node.new(score,movie)
     else
@@ -66,7 +68,8 @@ class BinarySearchTree
     if !@root_node
       return nil
     else
-      return max_helper(@root_node)
+      node = max_helper(@root_node)
+      return {node.movie => node.score}
     end
   end
 
@@ -82,7 +85,8 @@ class BinarySearchTree
     if !@root_node
       return nil
     else
-      return max_helper(@root_node)
+      node = min_helper(@root_node)
+      return {node.movie => node.score}
     end
   end
 
@@ -90,7 +94,7 @@ class BinarySearchTree
     if !node.left
       return node
     else
-      return max_helper(node.left)
+      return min_helper(node.left)
     end
   end
 
@@ -107,14 +111,128 @@ class BinarySearchTree
     if !node.left
       sort_helper(node.left, sorted_tree)
     end
-    sorted_tree << node
+    sorted_tree << {node.movie => node.score}
     if !node.right
       sort_helper(node.right, sorted_tree)
     end
   end
 
   def load(filename)
+    movies = []
+    movie_file = IO.readlines(filename)
+    movie_file.each do |movie_file|
+      movies = movie_file.split(", ",2)
+    end
+    movies.each do |movies|
+      insert(movies[0],movies[1])
+    end
+  end
 
+  def health(depth)
+    #for each node at depth
+    dnodes = []
+    dnodes = depth_helper(depth, @root_node, dnodes)
+    health_nodes = []
+    dnodes.each |dnodes| do
+      health_nodes = [dnodes.score, child_count(dnodes), health_helper]
+    end
+    return health_nodes
+  end
+
+  def depth_helper(depth, node, node_arr)
+    if depth == 0
+      node_arr << node
+    elsif depth > 0
+      if node.left
+        node_arr << depth_helper(depth-1, node.left, node_arr)
+      end
+      if node.right
+        node_arr << depth_helper(depth-1, node.right, node_arr)
+      end
+    end
+    return node_arr
+  end
+
+  def health_helper(node)
+    status = [node.score]
+    status << child_count(node)
+    status << 100 * (status[2]/@total_nodes)
+    return status
+  end
+
+  def child_count(node)
+    if node
+      return 1+child_count(node.left)+child_count(node.right)
+    else
+      return 0
+    end
+  end
+
+  def leaves
+    return leaves_helper(@root_node)
+  end
+
+  def leaves_helper(node)
+    leaf_count = 0
+    if !node.left && !node.right
+      return 1
+    end
+    if node.left
+      leaf_count += leaves_helper(node.left)
+    end
+    if node.right
+      leaf_count += leaves_helper(node.right)
+    end
+    return leaf_count
+  end
+
+  def height
+    return height_helper(@root_node)-1
+  end
+
+  def height_helper(node)
+    if !node
+      return 0
+    else
+      left = height_helper(node.left)+1
+      right = height_helper(node.right+1)
+      if right > left
+        return right
+      else
+        return left
+      end
+    end
+  end
+
+  def delete(score)
+    if delete_helper(score, @root_node)
+      return score
+    else
+      return nil
+    end
+  end
+
+  def delete_helper(score, node)
+    if !node
+      return nil
+    elsif node.score == score
+      if node.left && node.right
+        successor = min_helper(node.right)
+        node.score = successor.score
+        node.movie = successor.movie
+        delete_helper(successor.score, successor)
+      elsif node.left
+        node = node.left
+      elsif node.right
+        node = node.right
+      else
+        node = nil
+      end
+    elsif node.score > score
+      delete_helper(score, node.left)
+    else
+      delete_helper(score, node.right)
+    end
   end
 
 end

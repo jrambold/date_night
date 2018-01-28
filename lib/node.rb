@@ -1,7 +1,7 @@
 class Node
-  attr_accessor :score
-                :movie
-                :left
+  attr_accessor :score,
+                :movie,
+                :left,
                 :right
 
   def initialize(score, movie)
