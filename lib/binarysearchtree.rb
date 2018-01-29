@@ -210,11 +210,7 @@ class BinarySearchTree
   end
 
   def delete(score)
-    if delete_helper(score, @root_node)
-      return score
-    else
-      return nil
-    end
+    delete_helper(score, @root_node)
   end
 
   def delete_helper(score, node)
@@ -226,7 +222,7 @@ class BinarySearchTree
         node.score = successor.score
         node.movie = successor.movie
         delete_helper(successor.score, successor)
-      elsif node.left
+      elsif node.left #node is not passing the new value up
         node = node.left
       elsif node.right
         node = node.right

@@ -58,4 +58,13 @@ class Test_BinarySearchTree < Minitest::Test
     assert_equal tree.leaves, 2
     assert_equal tree.height, 4
   end
+
+  def test_delete
+    tree = BinarySearchTree.new()
+    tree.insert(98, "Animals United")
+    tree.insert(58, "Armageddon")
+    tree.delete(98)
+    refute tree.include?(98)
+    assert tree.include?(58)
+  end
 end
