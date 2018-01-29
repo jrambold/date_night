@@ -10,7 +10,4 @@ class Node
     @left = nil
     @right = nil
   end
-
-
-
 end

@@ -11,6 +11,7 @@ class BinarySearchTree
     @total_nodes += 1
     if !@root_node
       @root_node = Node.new(score,movie)
+      return 0
     else
       insert_helper(@root_node, score, movie)
     end
@@ -20,14 +21,16 @@ class BinarySearchTree
     if node.score > score
       if !node.left
         node.left = Node.new(score, movie)
+        return 1
       else
-        insert_helper(node.left, score, movie)
+        return insert_helper(node.left, score, movie)+1
       end
     else
       if !node.right
         node.right = Node.new(score, movie)
+        return 1
       else
-        insert_helper(node.right, score, movie)
+        return insert_helper(node.right, score, movie)+1
       end
     end
   end
@@ -210,29 +213,47 @@ class BinarySearchTree
   end
 
   def delete(score)
-    delete_helper(score, @root_node)
+    delete_helper(score, @root_node, nil, nil)
   end
 
-  def delete_helper(score, node)
+  def delete_helper(score, node, parent, side)
     if !node
       return nil
     elsif node.score == score
-      if node.left && node.right
+      if node.left && node.right #node has both children
         successor = min_helper(node.right)
         node.score = successor.score
         node.movie = successor.movie
-        delete_helper(successor.score, successor)
-      elsif node.left #ruby not passing reference. need parent
-        node = node.left
-      elsif node.right
-        node = node.right
-      else
-        node = nil
+        delete_helper(successor.score, node.right, node, "right")
+      elsif node.left #replace node with single left child
+        if node.score == @root_node.score
+          @root_node = node.left
+        elsif side == "left"
+          parent.left = node.left
+        else
+          parent.right = node.left
+        end
+      elsif node.right #replace node with single right
+        if node.score == @root_node.score
+          @root_node = node.right
+        elsif side == "left"
+          parent.left = node.right
+        else
+          parent.right = node.right
+        end
+      else #node has no children
+        if node.score == @root_node.score
+          @root_node = nil
+        elsif side == "left"
+          parent.left = nil
+        else
+          parent.right = nil
+        end
       end
     elsif node.score > score
-      delete_helper(score, node.left)
+      delete_helper(score, node.left, node, "left")
     else
-      delete_helper(score, node.right)
+      delete_helper(score, node.right, node, "right")
     end
   end
 
