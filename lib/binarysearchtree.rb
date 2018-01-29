@@ -61,6 +61,8 @@ class BinarySearchTree
       return 1
     elsif node.score > score
       return depth_of_helper(node.left, score) + 1
+    else
+      return depth_of_helper(node.right, score) +1
     end
   end
 
@@ -99,29 +101,33 @@ class BinarySearchTree
   end
 
   def sort
-    if !root_node
+    if !@root_node
       return nil
     else
       sorted_tree = []
-      sort_helper(@root_node, sorted_tree)
+      sorted_tree = sort_helper(@root_node)
     end
+    return sorted_tree
   end
 
-  def sort_helper(node, sorted_tree)
-    if !node.left
-      sort_helper(node.left, sorted_tree)
+  def sort_helper(node)
+    sorted_tree = []
+    if node.left
+      sorted_tree = sort_helper(node.left)
     end
     sorted_tree << {node.movie => node.score}
-    if !node.right
-      sort_helper(node.right, sorted_tree)
+    if node.right
+      sorted_tree += sort_helper(node.right)
     end
+    return sorted_tree
   end
 
   def load(filename)
     movies = []
     movie_file = IO.readlines(filename)
     movie_file.each do |movie_file|
-      movies = movie_file.split(", ",2)
+      to_load =  movie_file.split(", ",2)
+      movies << [to_load[0].to_i, to_load[1]]
     end
     movies.each do |movies|
       insert(movies[0],movies[1])
@@ -130,33 +136,32 @@ class BinarySearchTree
 
   def health(depth)
     #for each node at depth
-    dnodes = []
-    dnodes = depth_helper(depth, @root_node, dnodes)
+    dnodes = depth_helper(depth, @root_node)
     health_nodes = []
-    dnodes.each |dnodes| do
-      health_nodes = [dnodes.score, child_count(dnodes), health_helper]
+    dnodes.each do |dnodes|
+      health_nodes << [dnodes.score, child_count(dnodes), health_helper(dnodes)]
     end
     return health_nodes
   end
 
-  def depth_helper(depth, node, node_arr)
+  def depth_helper(depth, node)
+    node_arr = []
     if depth == 0
       node_arr << node
     elsif depth > 0
       if node.left
-        node_arr << depth_helper(depth-1, node.left, node_arr)
+        node_arr = depth_helper(depth-1, node.left)
       end
       if node.right
-        node_arr << depth_helper(depth-1, node.right, node_arr)
+        node_arr += depth_helper(depth-1, node.right)
       end
     end
     return node_arr
   end
 
   def health_helper(node)
-    status = [node.score]
-    status << child_count(node)
-    status << 100 * (status[2]/@total_nodes)
+    children = child_count(node)
+    status = 100*children/@total_nodes
     return status
   end
 
@@ -195,7 +200,7 @@ class BinarySearchTree
       return 0
     else
       left = height_helper(node.left)+1
-      right = height_helper(node.right+1)
+      right = height_helper(node.right)+1
       if right > left
         return right
       else
