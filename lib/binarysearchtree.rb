@@ -135,6 +135,7 @@ class BinarySearchTree
     movies.each do |movies|
       insert(movies[0],movies[1])
     end
+    return movies.length
   end
 
   def health(depth)
@@ -213,7 +214,12 @@ class BinarySearchTree
   end
 
   def delete(score)
-    delete_helper(score, @root_node, nil, nil)
+    deleted = delete_helper(score, @root_node, nil, nil)
+    if deleted
+      @total_nodes -= 1
+      return score
+    end
+    return nil
   end
 
   def delete_helper(score, node, parent, side)
