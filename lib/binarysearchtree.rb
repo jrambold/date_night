@@ -222,7 +222,7 @@ class BinarySearchTree
         node.score = successor.score
         node.movie = successor.movie
         delete_helper(successor.score, successor)
-      elsif node.left #node is not passing the new value up
+      elsif node.left #ruby not passing reference. need parent
         node = node.left
       elsif node.right
         node = node.right
