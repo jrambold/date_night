@@ -7,6 +7,7 @@ class BinarySearchTree
     @total_nodes = 0
   end
 
+  public
   def insert(score, movie)
     @total_nodes += 1
     if !@root_node
@@ -17,6 +18,7 @@ class BinarySearchTree
     end
   end
 
+  private
   def insert_helper(node, score, movie)
     if node.score > score
       if !node.left
@@ -35,10 +37,12 @@ class BinarySearchTree
     end
   end
 
+  public
   def include?(score)
     return include_helper(@root_node, score)
   end
 
+  private
   def include_helper(node, score)
     if !node
       return false
@@ -51,6 +55,7 @@ class BinarySearchTree
     end
   end
 
+  public
   def depth_of(score)
     if !include?(score)
       return nil
@@ -59,6 +64,7 @@ class BinarySearchTree
     end
   end
 
+  private
   def depth_of_helper(node,score)
     if node.score == score
       return 1
@@ -69,6 +75,7 @@ class BinarySearchTree
     end
   end
 
+  public
   def max
     if !@root_node
       return nil
@@ -78,6 +85,7 @@ class BinarySearchTree
     end
   end
 
+  public
   def max_helper(node)
     if !node.right
       return node
@@ -86,6 +94,7 @@ class BinarySearchTree
     end
   end
 
+  public
   def min
     if !@root_node
       return nil
@@ -95,6 +104,7 @@ class BinarySearchTree
     end
   end
 
+  public
   def min_helper(node)
     if !node.left
       return node
@@ -103,6 +113,7 @@ class BinarySearchTree
     end
   end
 
+  public
   def sort
     if !@root_node
       return nil
@@ -113,6 +124,7 @@ class BinarySearchTree
     return sorted_tree
   end
 
+  private
   def sort_helper(node)
     sorted_tree = []
     if node.left
@@ -125,6 +137,7 @@ class BinarySearchTree
     return sorted_tree
   end
 
+  public
   def load(filename)
     movies = []
     movie_file = IO.readlines(filename)
@@ -138,6 +151,7 @@ class BinarySearchTree
     return movies.length
   end
 
+  public
   def health(depth)
     #for each node at depth
     dnodes = depth_helper(depth, @root_node)
@@ -148,6 +162,7 @@ class BinarySearchTree
     return health_nodes
   end
 
+  private
   def depth_helper(depth, node)
     node_arr = []
     if depth == 0
@@ -163,12 +178,14 @@ class BinarySearchTree
     return node_arr
   end
 
+  private
   def health_helper(node)
     children = child_count(node)
     status = 100*children/@total_nodes
     return status
   end
 
+  private
   def child_count(node)
     if node
       return 1+child_count(node.left)+child_count(node.right)
@@ -177,10 +194,12 @@ class BinarySearchTree
     end
   end
 
+  public
   def leaves
     return leaves_helper(@root_node)
   end
 
+  private
   def leaves_helper(node)
     leaf_count = 0
     if !node.left && !node.right
@@ -195,10 +214,12 @@ class BinarySearchTree
     return leaf_count
   end
 
+  public
   def height
     return height_helper(@root_node)-1
   end
 
+  private
   def height_helper(node)
     if !node
       return 0
@@ -213,15 +234,17 @@ class BinarySearchTree
     end
   end
 
+  public
   def delete(score)
-    deleted = delete_helper(score, @root_node, nil, nil)
-    if deleted
+    if delete_helper(score, @root_node, nil, nil)
       @total_nodes -= 1
       return score
     end
     return nil
   end
 
+  private
+  #ruby doesn't pass references, requires tracking parent
   def delete_helper(score, node, parent, side)
     if !node
       return nil
@@ -247,7 +270,7 @@ class BinarySearchTree
         else
           parent.right = node.right
         end
-      else #node has no children
+      else #node has no children delete
         if node.score == @root_node.score
           @root_node = nil
         elsif side == "left"
