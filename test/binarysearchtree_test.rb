@@ -2,8 +2,7 @@
 require 'minitest'
 require 'minitest/autorun'
 require 'minitest/pride'
-require './lib/binarysearchtree'
-require './lib/node'
+require './lib/binarySearchTree'
 
 class Test_BinarySearchTree < Minitest::Test
   def setup
@@ -36,18 +35,22 @@ class Test_BinarySearchTree < Minitest::Test
     assert_equal @tree.depth_of(50), 2
   end
 
-  def test min_max
+  def test_max
     assert_equal @tree.max, {"Sharknado 3" => 92}
+  end
+
+  def test_min
     assert_equal @tree.min, {"hello" => 8}
   end
 
   def test_sort
-    assert_equal @tree.sort, [{"hello"=>8},
+    expected = [{"hello"=>8},
               {"world"=>9},
               {"Johnny English"=>16},
               {"Hannibal Buress: Animal Furnace"=>50},
               {"Bill & Ted's Excellent Adventure"=>61},
               {"Sharknado 3"=>92}]
+    assert_equal expected, @tree.sort
   end
 
   def test_load
@@ -67,19 +70,19 @@ class Test_BinarySearchTree < Minitest::Test
     tree.insert(86, "Charlie's Angels")
     tree.insert(38, "Charlie's Country")
     tree.insert(69, "Collateral Damage")
-    assert_equal tree.health(0), [[98, 7, 100]]
-    assert_equal tree.health(1), [[58, 6, 85]]
-    assert_equal tree.health(2), [[36, 2, 28], [93, 3, 42]]
-    assert_equal tree.leaves, 2
-    assert_equal tree.height, 4
+    assert_equal [[98, 7, 100]], tree.health(0)
+    assert_equal [[58, 6, 85]], tree.health(1)
+    assert_equal [[36, 2, 28], [93, 3, 42]], tree.health(2)
+    assert_equal 2, tree.leaves
+    assert_equal 4, tree.height
   end
 
   def test_leaves
-    assert_equal @tree.leaves, 3
+    assert_equal 3, @tree.leaves
   end
 
   def test_height
-    assert_equal @tree.height, 3
+    assert_equal 3, @tree.height
   end
 
   def test_delete
@@ -104,12 +107,14 @@ class Test_BinarySearchTree < Minitest::Test
 
     tree.delete(98)#root node delete
 
-    assert_equal tree.sort, [{"Charlie's Country"=>38},
-                    {"Collateral Damage"=>69},
-                    {"Bill & Ted's Excellent Adventure"=>93}]
+    expected = [{"Charlie's Country"=>38},
+                {"Collateral Damage"=>69},
+                {"Bill & Ted's Excellent Adventure"=>93}]
+    assert_equal expected, tree.sort
 
     tree.delete(38)#no children delete
-    assert_equal tree.sort, [{"Collateral Damage"=>69},
-                    {"Bill & Ted's Excellent Adventure"=>93}]
+    expected = [{"Collateral Damage"=>69},
+                {"Bill & Ted's Excellent Adventure"=>93}]
+    assert_equal expected, tree.sort
   end
 end

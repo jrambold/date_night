@@ -1,5 +1,4 @@
 class BinarySearchTree
-
   require_relative 'node'
 
   def initialize
@@ -85,7 +84,7 @@ class BinarySearchTree
     end
   end
 
-  public
+  private
   def max_helper(node)
     if !node.right
       return node
@@ -104,7 +103,7 @@ class BinarySearchTree
     end
   end
 
-  public
+  private
   def min_helper(node)
     if !node.left
       return node
